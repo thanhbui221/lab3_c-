@@ -1,0 +1,11 @@
+*
+!*.cpp
+!*.h
+!*.MIT
+!*.test
+!test*
+!*.sample
+!*.yml
+!.gitignore
+!README.md
+!Doxyfile.cfg
