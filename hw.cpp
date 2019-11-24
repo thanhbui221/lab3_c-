@@ -1,7 +1,7 @@
-/* 
-MIT License 
+/*
+MIT License
 
-Copyright (c) 2019 МГТУ им. Н.Э. Баумана, кафедра ИУ-6, Михаил Фетисов, 
+Copyright (c) 2019 МГТУ им. Н.Э. Баумана, кафедра ИУ-6, Михаил Фетисов,
 
 Программа-заготовка для домашнего задания
 */
@@ -18,58 +18,69 @@ Copyright (c) 2019 МГТУ им. Н.Э. Баумана, кафедра ИУ-6, 
 
 using namespace std;
 
-const size_t MAX_NAME_LENGTH    = 50;
-const size_t MIN_YEAR_OF_BIRTH  = 1900;
-const size_t MAX_YEAR_OF_BIRTH  = 2019;
+const size_t MAX_NAME_LENGTH    = 20;
+const size_t MIN_GOOD_NAME_LENGTH  = 2;
+const size_t MAX_GOOD_NAME_LENGTH  = 10;
+const size_t MAX_ADDRESS_NAME_LENGTH  = 100;
 
-class Person
+class Order
 {
-    string   _first_name;
-    string   _last_name;
-    uint16_t _year_of_birth;
+    uint16_t _order_number;
+    string _courier_name;
+    string _address;
+    string _good_name;
+    uint16_t _total;
 
 protected:
     bool invariant() const
     {
-        return _year_of_birth >= MIN_YEAR_OF_BIRTH
-            && _year_of_birth <= MAX_YEAR_OF_BIRTH
-            && !_first_name.empty() && _first_name.size() <= MAX_NAME_LENGTH 
-            && !_last_name.empty() && _last_name.size() <= MAX_NAME_LENGTH;
+        return !_courier_name.empty() && courier_name.size() <= MAX_NAME_LENGTH
+            && _good_name.size() <= MIN_GOOD_NAME_LENGTH && _good_name.size() <= MAX_GOOD_NAME_LENGTH
+            && !_address.empty() && _address.size() <= MAX_ADDRESS_NAME_LENGTH
+            && _order_number > 0
+            && _total > 0;
     }
 
 public:
-    Person() = delete;
+    () = delete;
 
-    Person(const string & first_name, const string & last_name, uint16_t year_of_birth)
-        : _first_name(first_name), _last_name(last_name), _year_of_birth(year_of_birth)
+    Order(uint16_t order_number, const string & courier_name, const string & address, const string & good_name, uint16_t total)
+      : _order_number(order_number), _courier_name(courier_name), _address(address), _good_name(good_name), _total(total)
     {
         assert(invariant());
     }
 
-    const string & getFirstName() const { return _first_name; }
-    const string & getLastName() const { return _last_name; }
-    uint16_t       getYearOfBirth() const { return _year_of_birth; }
+    uint16_t       getOrderNumber() const { return _order_number; }
+    const string & getCourierName() const { return _courier_name; }
+    const string & getAddress() const { return _address; }
+    const string & getGoodName() { return _good_name; }
+    uint16_t getTotal() const { return _total; }
 
-    static bool    write(const Person &p, ostream& os)
+
+    static bool    write(const Order &o, ostream& os)
     {
-        writeString(os, p.getFirstName());
-        writeString(os, p.getLastName());
-        writeNumber(os, p.getYearOfBirth());
+        writeNumber(os, o.getOrderNumber());
+        writeString(os, o.getCourierName());
+        writeString(os, o.getAddress());
+        writeString(os, o.getGoodName());
+        writeNumber(os, o.getOrderNumber());
 
         return os.good();
     }
 
-    static Person  read(istream& is)
+    static Order  read(istream& is)
     {
-        string   first_name = readString(is, MAX_NAME_LENGTH);
-        string   last_name = readString(is, MAX_NAME_LENGTH);
-        uint16_t year = readNumber<uint16_t>(is);
+        uint16_t order_number = readNumber<uint16_t>(is);
+        string   courier_name = readString(is, MAX_NAME_LENGTH);
+        string   address = readString(is, MAX_ADDRESS_NAME_LENGTH);
+        string   good_name = readString(is, MAX_GOOD_NAME_LENGTH);
+        uint16_t total = readNumber<uint16_t>(is);
 
-        return Person(first_name, last_name, year);
+        return Order(order_number, courier_name, address, good_name, total);
     }
 };
 
-bool performCommand(const vector<string> & args, Collector<Person> & col)
+bool performCommand(const vector<string> & args, Collector<Order> & col)
 {
     if (args.empty())
         return false;
@@ -121,7 +132,7 @@ bool performCommand(const vector<string> & args, Collector<Person> & col)
             return false;
         }
 
-        col.addItem(Person(args[1].c_str(), args[2].c_str(), stoul(args[3])));
+        col.addItem(Order(args[1].c_str(), args[2].c_str(), stoul(args[3])));
         return true;
     }
 
@@ -133,7 +144,7 @@ bool performCommand(const vector<string> & args, Collector<Person> & col)
             return false;
         }
 
-        col.updateItem(stoul(args[1]), Person(args[2].c_str(), args[3].c_str(), stoul(args[4])));
+        col.updateItem(stoul(args[1]), Order(args[2].c_str(), args[3].c_str(), stoul(args[4])));
         return true;
     }
 
@@ -160,14 +171,16 @@ bool performCommand(const vector<string> & args, Collector<Person> & col)
         size_t count = 0;
         for(size_t i=0; i < col.getSize(); ++i)
         {
-            Person item = col.getItem(i);
+            Order item = col.getItem(i);
 
             if (!col.isRemoved(i))
             {
-                cout << "[" << i << "] " 
-                        << item.getFirstName() << " " 
-                        << item.getLastName() << " " 
-                        << item.getYearOfBirth() << endl;
+                cout << "[" << i << "] "
+                        << item.getOrderNumber() << " "
+                        << item.getCourierName() << " "
+                        << item.getAddress() << " "
+                        << item.getGoodName() << " "
+                        << item.getTotal() << endl;
                 count ++;
             }
         }
@@ -183,7 +196,7 @@ bool performCommand(const vector<string> & args, Collector<Person> & col)
 
 int main(int , char **)
 {
-    Collector<Person> col;
+    Collector<Order> col;
 
     for (string line; getline(cin, line); )
     {
@@ -192,7 +205,7 @@ int main(int , char **)
 
         istringstream  iss(line);
         vector<string> args;
-    
+
         for(string str; iss.good();)
         {
             iss >> str;
