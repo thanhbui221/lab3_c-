@@ -126,25 +126,25 @@ bool performCommand(const vector<string> & args, Collector<Order> & col)
 
     if (args[0] == "a" || args[0] == "add")
     {
-        if (args.size() != 4)
+        if (args.size() != 6)
         {
             cerr << "Некорректное количество аргументов команды add" << endl;
             return false;
         }
 
-        col.addItem(Order(args[1].c_str(), args[2].c_str(), stoul(args[3])));
+        col.addItem(Order(stoul(args[1]), args[2].c_str(), args[3].c_str(), args[4].c_str(), stoul(args[5])));
         return true;
     }
 
     if (args[0] == "u" || args[0] == "update")
     {
-        if (args.size() != 5)
+        if (args.size() != 7)
         {
             cerr << "Некорректное количество аргументов команды update" << endl;
             return false;
         }
 
-        col.updateItem(stoul(args[1]), Order(args[2].c_str(), args[3].c_str(), stoul(args[4])));
+        col.updateItem(stoul(args[1]), Order(stoul(args[2]), args[3].c_str(), args[4].c_str(), args[5].c_str(), stoul(args[6])));
         return true;
     }
 
