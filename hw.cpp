@@ -34,15 +34,15 @@ class Order
 protected:
     bool invariant() const
     {
-        return !_courier_name.empty() && courier_name.size() <= MAX_NAME_LENGTH
-            && _good_name.size() <= MIN_GOOD_NAME_LENGTH && _good_name.size() <= MAX_GOOD_NAME_LENGTH
+        return !_courier_name.empty() && _courier_name.size() <= MAX_NAME_LENGTH
+            && _good_name.size() >= MIN_GOOD_NAME_LENGTH && _good_name.size() <= MAX_GOOD_NAME_LENGTH
             && !_address.empty() && _address.size() <= MAX_ADDRESS_NAME_LENGTH
             && _order_number > 0
             && _total > 0;
     }
 
 public:
-    () = delete;
+    Order() = delete;
 
     Order(uint16_t order_number, const string & courier_name, const string & address, const string & good_name, uint16_t total)
       : _order_number(order_number), _courier_name(courier_name), _address(address), _good_name(good_name), _total(total)
@@ -53,7 +53,7 @@ public:
     uint16_t       getOrderNumber() const { return _order_number; }
     const string & getCourierName() const { return _courier_name; }
     const string & getAddress() const { return _address; }
-    const string & getGoodName() { return _good_name; }
+    const string & getGoodName() const { return _good_name; }
     uint16_t getTotal() const { return _total; }
 
 
@@ -63,7 +63,7 @@ public:
         writeString(os, o.getCourierName());
         writeString(os, o.getAddress());
         writeString(os, o.getGoodName());
-        writeNumber(os, o.getOrderNumber());
+        writeNumber(os, o.getTotal());
 
         return os.good();
     }
